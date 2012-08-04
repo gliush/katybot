@@ -3,7 +3,7 @@
   (:require [clojure.string :as str]))
 
 (defn reload-robot []
-  (doseq [module ["utils" "core" "brain" "campfire" "console" "atom_memory" "file_memory"]]
+  (doseq [module ["utils" "core" "brain" "campfire" "xmpp" "console" "atom_memory" "file_memory"]]
     (fyi "Loading " module)
     (load module)
     (use (-> (str "katybot." module) (str/replace "_" "-") symbol))))
@@ -41,4 +41,14 @@
                         (env "KATYBOT_CAMPFIRE_ROOM")
                         (env "KATYBOT_CAMPFIRE_TOKEN"))
     (+global-brain [(or (env "KATYBOT_CAMPFIRE_ALIASES") "/|Kat[ye]")])
+    (listen)))
+
+(defn listen-xmpp []
+  (-> (new-robot)
+    (+file-memory "robot.memory")
+    (+xmpp-receptor {:username (env "KATYBOT_XMPP_ACCOUNT"  "katybot@jabber.ru")
+                     :password (env "KATYBOT_XMPP_PASSWORD" "FJuJbmwkeU"   )
+                     :host     (env "KATYBOT_XMPP_HOST"     "jabber.ru")
+                     :domain   (env "KATYBOT_XMPP_DOMAIN"   "jabber.ru")})
+    (+global-brain [(or (env "KATYBOT_XMPP_ALIASES") "=|/|Kat[ye]")])
     (listen)))

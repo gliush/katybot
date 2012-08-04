@@ -62,5 +62,12 @@
                      (run [] (when-not (task) (.cancel this))))]
     (.scheduleAtFixedRate timer timer-task period period)))
 
-(defn env [v]
-  (-> (System/getenv) (.get v)))
+(defn env 
+  ([k]
+      (-> (System/getenv) (.get k)))
+  ([k default]
+    (let [val (-> (System/getenv) (.get k))]
+      (case val
+        nil default
+        val)))
+  )
